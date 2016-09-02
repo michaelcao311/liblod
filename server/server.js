@@ -2,9 +2,18 @@ var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var path = require('path');
-
+var nunjucks = require('nunjucks');
 var io = require('socket.io')(http);
 
+var rooms;
+
+
+nunjucks.configure('views', {
+  autoescape: true;
+  express: app;
+});
+
+app.use(express.static(__dirname + '/views'));
 app.use(express.static(__dirname));
 
 app.get('/', function (req, res) {
@@ -20,6 +29,7 @@ app.get('/reg', function(req, res) {
   var name = queries.name;
   var room = queries.room;
   res.send("name: " + name + "<br>room: " + room)
+
 })
 
 http.listen(1111, function() {
