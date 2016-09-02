@@ -27,5 +27,7 @@ http.listen(1111, function() {
 });
 
 io.on('connection', function(socket) {
-  console.log('blob');
-})
+    console.log('blob');
+    socket.on('disconnect', function(){
+        console.log('blod disconnected');
+    });})
