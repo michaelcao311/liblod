@@ -28,6 +28,10 @@ http.listen(1111, function() {
 
 io.on('connection', function(socket) {
     console.log('blob');
+    socket.on('chat message', function(msg){
+        console.log(msg);
+        io.emit('chat recieved', msg);
+    });
     socket.on('disconnect', function(){
         console.log('blod disconnected');
     });})

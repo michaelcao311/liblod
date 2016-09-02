@@ -6,18 +6,15 @@
 <body>
   lod the bod
   <br>
-  <form action="/reg" method="get">
-    <strong>name: </strong>
-    <br>
-    <input type="text" name="name">
-    <br>
-    <strong>room: </strong>
-    <br>
-    <input type="text" name="room">
-    <br>
+  <form>
+    <input type="text" id='txt' name="name">
     <input type="submit" value="enter room"> 
   </form>
+    <h1 id='chat'>
+
+    </h1>
     <script src="/socket.io/socket.io.js"></script>
-  <script src="client.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="client.js"></script>
 
 </body>
