@@ -28,8 +28,9 @@ app.get('/reg', function(req, res) {
   var queries = req.query;
   var name = queries.name;
   var room = queries.room;
-  res.send("name: " + name + "<br>room: " + room)
 
+    // res.send("name: " + name + "<br>room: " + room)
+    res.sendFile(__dirname + '/reg.html');
 })
 
 http.listen(1111, function() {
@@ -38,4 +39,11 @@ http.listen(1111, function() {
 
 io.on('connection', function(socket) {
   console.log('blob');
-})
+    socket.on('chat message', function(msg) {
+        console.log(msg);
+        io.emit('chat recieved', msg);
+    });
+    socket.on('disconnect', function(){
+         console.log('blod disconnected');
+     });
+});
