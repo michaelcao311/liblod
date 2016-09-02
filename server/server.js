@@ -21,6 +21,8 @@ app.get('/reg', function(req, res) {
   res.send("name: " + name + "<br>room: " + room)
 })
 
+app.use(express.static(__dirname + '/client'));
+
 http.listen(1111, function() {
   console.log('listening');
 });
