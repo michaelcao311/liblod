@@ -9,8 +9,8 @@ var rooms;
 
 
 nunjucks.configure('views', {
-  autoescape: true;
-  express: app;
+  autoescape: true,
+  express: app
 });
 
 app.use(express.static(__dirname + '/views'));
@@ -29,8 +29,9 @@ app.get('/reg', function(req, res) {
   var name = queries.name;
   var room = queries.room;
 
+
     // res.send("name: " + name + "<br>room: " + room)
-    res.sendFile(__dirname + '/reg.html');
+    res.render(__dirname + '/views/index.njk');
 })
 
 http.listen(1111, function() {
@@ -38,12 +39,14 @@ http.listen(1111, function() {
 });
 
 io.on('connection', function(socket) {
+  var id = socket.id;
+
   console.log('blob');
-    socket.on('chat message', function(msg) {
-        console.log(msg);
-        io.emit('chat recieved', msg);
-    });
-    socket.on('disconnect', function(){
-         console.log('blod disconnected');
-     });
+  socket.on('chat message', function(msg) {
+    console.log(msg);
+    io.emit('chat recieved', msg);
+  });
+  socket.on('disconnect', function(){
+    console.log('blod disconnected');
+  });
 });
