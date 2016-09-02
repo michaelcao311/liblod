@@ -17,7 +17,7 @@ app.use(express.static(__dirname + '/views'));
 app.use(express.static(__dirname));
 
 app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/blod.html', function (err) {
+  res.sendFile(__dirname + '/home.html', function (err) {
     if (err) console.log(err);
     else 
       console.log('jtb');
