@@ -4,6 +4,8 @@ var http = require('http').Server(app);
 var path = require('path');
 
 var io = require('socket.io')(http);
+// namespace just for a specific chat room
+var chat = io.of('/reg');
 
 app.use(express.static(__dirname));
 
@@ -27,13 +29,32 @@ http.listen(1111, function() {
   console.log('listening at localhost:1111');
 });
 
-io.on('connection', function(socket) {
-  console.log('blob');
-    socket.on('chat message', function(msg) {
-        console.log(msg);
-        io.emit('chat recieved', msg);
+// Code for the Chat Room
+var numUsers = 0
+chat.on('connection', function(socket) {
+    numUsers += 1;
+    socket.on('connect room', function(msg) {
+        console.log('user connected to the room');
+        console.log(numUsers);
+        console.log('blob: ' + numUsers + ' users online');
+        // Eventually replace these with the username
+        chat.emit('user joined', 'user joined the chat');
     });
     socket.on('disconnect', function(){
-         console.log('blod disconnected');
-     });
+         console.log('blod disconnected from chat');
+         numUsers -= 1;
+         // eventually replace these with the username
+         chat.emit('user left', 'user left the chat');
+    });
+    socket.on('chat message', function(msg) {
+        console.log(msg);
+        chat.emit('chat recieved', msg);
+    });
+});
+
+
+io.on('connection', function(socket) {
+    socket.on('disconnect', function(){
+         console.log('blod disconnected from a page');
+    });
 });
