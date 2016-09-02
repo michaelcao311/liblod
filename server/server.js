@@ -5,6 +5,7 @@ var path = require('path');
 
 var io = require('socket.io')(http);
 
+app.use(express.static(__dirname));
 
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/blod.html', function (err) {
@@ -22,7 +23,7 @@ app.get('/reg', function(req, res) {
 })
 
 http.listen(1111, function() {
-  console.log('listening');
+  console.log('listening at localhost:1111');
 });
 
 io.on('connection', function(socket) {
