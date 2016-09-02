@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <head>
   <title>blod</title>
-<link href="https://fonts.googleapis.com/css?family=Bungee+Shade" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Bungee+Shade|Source+Sans+Pro:300" rel="stylesheet">
 <link href="/css/home.css" rel="stylesheet">
 <head>
 <body>
     <h1 id="header"> Welcome to Liblod! </h1>
   <br>
   <form action="/reg" method="get">
-    <strong>name: </strong>
+    <h3> <strong>Name: </strong> </h3>
     <br>
     <input type="text" name="name">
     <br>
-    <strong>room: </strong>
+    <h3> <strong>Room: </strong> </h3>
     <br>
     <input type="text" name="room">
     <br>
-    <input type="submit" value="enter room"> 
+    <input id="submitter" type="submit" value="Submit!"> 
   </form>
     <script src="/socket.io/socket.io.js"></script>
   <script src="client.js"></script>

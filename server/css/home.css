@@ -1,4 +1,16 @@
-html {
+#header {
+    text-align: center;
+    font-size: 50px;
     font-family: 'Bungee Shade', cursive;
+}
+form {
+    text-align: center;
+}
+h3 {
+    font-family: 'Source Sans Pro', sans-serif;
+    margin-bottom: 0px;
+}
+#submitter {
+    margin-top: 24px;
 
 }
