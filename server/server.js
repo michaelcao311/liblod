@@ -24,7 +24,7 @@ app.get('/reg', function(req, res) {
 })
 
 http.listen(1111, function() {
-  console.log('listening');
+  console.log('listening at localhost:1111');
 });
 
 io.on('connection', function(socket) {
