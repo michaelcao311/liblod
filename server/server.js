@@ -14,6 +14,13 @@ app.get('/', function (req, res) {
   });
 });
 
+app.get('/reg', function(req, res) {
+  var queries = req.query;
+  var name = queries.name;
+  var room = queries.room;
+  res.send("name: " + name + "<br>room: " + room)
+})
+
 http.listen(1111, function() {
   console.log('listening');
 });
