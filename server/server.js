@@ -6,6 +6,7 @@ var nunjucks = require('nunjucks');
 var io = require('socket.io')(http);
 
 var rooms = new Map();
+// All users
 var users = [];
 var namespaces = [];
 // console.log(1, rooms);
@@ -44,9 +45,9 @@ app.get('/reg', function (req, res) {
   console.log('namespaces: ' + namespaces[0]);
   console.log('roomnames: ', room_names);
   console.log('users: ', users);
-
-  // res.send("name: " + name + "<br>room: " + room)
-  res.render(__dirname + '/views/index.njk', {roomname: room, username: name});
+     // res.send("name: " + name + "<br>room: " + room)
+    res.render(__dirname + '/views/index.njk', {roomname: room, username: name});
+    }
 })
 
 http.listen(1111, function() {
