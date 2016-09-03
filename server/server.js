@@ -26,13 +26,23 @@ app.get('/', function (req, res) {
   });
 });
 
-app.get('/reg', function(req, res) {
+app.get('/inbetween', function (req, res) {
+  if (roomnames.indexOf(req.query.room) === -1) {
+    makeNsp(req.query.room);
+  }
+  res.redirect('/reg?room=' + req.query.room + '&name=' + req.query.name);
+});
+
+app.get('/reg', function (req, res) {
   var queries = req.query;
   var name = queries.name;
   var room = queries.room;
   console.log('roomnames: ', roomnames);
   console.log('users: ', users);
+  rooms[room].push(name);
+  users.push(name);
 
+  console.log('namespaces: ' + namespaces[0]);
 
   // res.send("name: " + name + "<br>room: " + room)
   res.render(__dirname + '/views/index.njk', {roomname: room, username: name});
@@ -42,66 +52,50 @@ http.listen(1111, function() {
   console.log('listening at localhost:1111');
 });
 
-io.use(function(socket, next) {
-  // console.log('query: ', socket.handshake.query);
-  next();
-});
-io.use(function(socket, next) {
-console.log(2, rooms);
-  var rName = socket.handshake.query.roomname;
-  var uName = socket.handshake.query.name;
-  // console.log('rooms: ' + rooms)
-  if (roomnames.indexOf(rName) === -1) {
-  console.log(3, rooms);
-    // console.log('rName: ', rName);
-    // console.log('indexof: ', roomnames.indexOf(rName));
-    // console.log('roomnames: ', roomnames);
+// io.use(function(socket, next) {
+//   // console.log('query: ', socket.handshake.query);
+//   next();
+// });
+// io.use(function(socket, next) {
+//   var rName = socket.handshake.query.roomname;
+//   var uName = socket.handshake.query.name;
+//   // console.log('rooms: ' + rooms)
 
-    roomnames.push(rName);
-    rooms[rName] = new Array();
-    rooms[rName].push(uName);
-    makeNsp(rName);
-    console.log(4, rooms);
-  } else {  
-    console.log('rName: ', rName);
-    // console.log('indexof: ', roomnames.indexOf(rName));
-    // console.log('roomnames: ', roomnames);
-    rooms[rName].push(uName);
-    console.log(5, rooms);
-  } 
+//   rooms[rName].push(uName);
+//   } 
 
-  console.log('namespaces: ' + namespaces);
-});
+//   console.log('namespaces: ' + namespaces);
+// });
 
-io.on('connection', function(socket) {
-  var id = socket.id;
+// io.on('connection', function(socket) {
+//   var id = socket.id;
 
-  console.log('blob');
-  socket.on('chat message', function(msg) {
-    console.log(msg);
-    io.emit('chat recieved', msg);
-  });
-  socket.on('disconnect', function(){
-    console.log('blod disconnected');
-  });
-});
+//   console.log('blob');
+//   socket.on('chat message', function(msg) {
+//     console.log(msg);
+//     io.emit('chat recieved', msg);
+//   });
+//   socket.on('disconnect', function(){
+//     console.log('blod disconnected');
+//   });
+// });
 
 var makeNsp = function(name) {
-  console.log(1);
   // console.log('rooms: ' + rooms);
   var nsp = io.of('/' + name);
-  console.log(2);
   nsp.on('connection', function(socket){
-    console.log('someone connected');
-    nsp.on('chat message', function(msg) {
+    console.log('someone connected to ' + name);
+    console.log('users: ' + rooms[name]);
+    socket.on('chat message', function(msg) {
       console.log(msg);
-      io.emit('chat recieved', msg);
+      nsp.emit('chat recieved', msg);
     });
     socket.on('disconnect', function() {
       console.log('someone disconnected');
     });
   });
-  console.log(nsp);
+  console.log('namespace made: ' + name);
   namespaces.push(nsp);
-  
+  roomnames.push(name);
+  rooms[name] = new Array();
 }
