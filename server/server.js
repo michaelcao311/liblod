@@ -41,6 +41,11 @@ http.listen(1111, function() {
   console.log('listening at localhost:1111');
 });
 
+// io.use(function(socket, next) {
+//   console.log('name: ', socket.handshake.query);
+//   next();
+// });
+
 io.on('connection', function(socket) {
   var id = socket.id;
 
@@ -54,6 +59,4 @@ io.on('connection', function(socket) {
   });
 });
 
-io.use(function(socket) {
-  console.log('name: ', socket.handshake.query);
-});
+
