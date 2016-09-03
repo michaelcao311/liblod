@@ -5,11 +5,10 @@ var path = require('path');
 var nunjucks = require('nunjucks');
 var io = require('socket.io')(http);
 
-var roomnames = new Array();
 var rooms = new Map();
 var users = [];
 var namespaces = [];
-console.log(1, rooms);
+// console.log(1, rooms);
 
 nunjucks.configure('views', {
   autoescape: true,
@@ -27,7 +26,7 @@ app.get('/', function (req, res) {
 });
 
 app.get('/inbetween', function (req, res) {
-  if (roomnames.indexOf(req.query.room) === -1) {
+  if (!rooms.has(req.query.room)) {
     makeNsp(req.query.room);
   }
   res.redirect('/reg?room=' + req.query.room + '&name=' + req.query.name);
@@ -37,12 +36,14 @@ app.get('/reg', function (req, res) {
   var queries = req.query;
   var name = queries.name;
   var room = queries.room;
-  console.log('roomnames: ', roomnames);
-  console.log('users: ', users);
+  var room_names = [];
   rooms[room].push(name);
   users.push(name);
+  for(var k in rooms) room_names.push(k);
 
   console.log('namespaces: ' + namespaces[0]);
+  console.log('roomnames: ', room_names);
+  console.log('users: ', users);
 
   // res.send("name: " + name + "<br>room: " + room)
   res.render(__dirname + '/views/index.njk', {roomname: room, username: name});
@@ -87,7 +88,7 @@ var makeNsp = function(name) {
     console.log('someone connected to ' + name);
     console.log('users: ' + rooms[name]);
     socket.on('chat message', function(msg) {
-      console.log(msg);
+      // console.log(msg);
       nsp.emit('chat recieved', msg);
     });
     socket.on('disconnect', function() {
@@ -96,6 +97,5 @@ var makeNsp = function(name) {
   });
   console.log('namespace made: ' + name);
   namespaces.push(nsp);
-  roomnames.push(name);
   rooms[name] = new Array();
 }
