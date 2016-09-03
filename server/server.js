@@ -6,7 +6,9 @@ var nunjucks = require('nunjucks');
 var io = require('socket.io')(http);
 
 var roomnames = new Array();
+// Rooms --> Roomnames ---> Users
 var rooms = new Map();
+// All users
 var users = [];
 var namespaces = [];
 console.log(1, rooms);
@@ -39,13 +41,18 @@ app.get('/reg', function (req, res) {
   var room = queries.room;
   console.log('roomnames: ', roomnames);
   console.log('users: ', users);
-  rooms[room].push(name);
-  users.push(name);
+    if (!rooms.has(room)) {
+        console.log('Room ' + room + ' doesnt exist...');
+        res.redirect('/');
+    } else {
+    rooms[room].push(name);
+    users.push(name);
 
-  console.log('namespaces: ' + namespaces[0]);
+    console.log('namespaces: ' + namespaces[0]);
 
-  // res.send("name: " + name + "<br>room: " + room)
-  res.render(__dirname + '/views/index.njk', {roomname: room, username: name});
+     // res.send("name: " + name + "<br>room: " + room)
+    res.render(__dirname + '/views/index.njk', {roomname: room, username: name});
+    }
 })
 
 http.listen(1111, function() {
