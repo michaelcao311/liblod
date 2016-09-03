@@ -1,5 +1,9 @@
 $(document).ready(function() {
-    var socket = io('/reg')
+    var room = $("#welcome").val();
+    // maybe put this in the in teh doc
+    var socket = io('/' + room);
+    console.log(room);
+    console.log("here");
     socket.emit('connect room', 'uhh');
 
     $('form').submit(function(){

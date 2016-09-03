@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <title> reg </title>
+    </head>
+    <body>
+        <h1 id='welcome' value={{roomname}}> {{roomname}}</h1>
+        <form id="chat"> 
+            <input type="text" id="txt"> </input>
+            <input type="submit"> </input>
+         </form>
+        <h1 id='chat_result'> </h1>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+        <script> 
+            var socket = io('/{{ roomname }}');
+            socket.on('connect', function(socket) {
+                console.log('connected');
+            });
+            socket.on('connect-error', function(socket) {
+                console.log('connect error');
+            });
+        </script> 
+        <script src="../chat.js"></script>    
+
+
+    </body>
+</html>
+
