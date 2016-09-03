@@ -1,4 +1,3 @@
-var socket = io()
 $('form').submit(function(){
     socket.emit('chat message', $('#txt').val());
     console.log('yo');
