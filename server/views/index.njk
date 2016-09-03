@@ -13,7 +13,10 @@
         <script src="/socket.io/socket.io.js"></script>
         <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
         <script> 
-            var socket = io('/{{ roomname }}', { query: 'name={{username}}'});
+            var socket = io('/{{ roomname }}', { 
+                query: 'name={{ username }}&roomname={{ roomname }}'
+            });
+            
         </script> 
         <script src="chat.js"></script>    
 
