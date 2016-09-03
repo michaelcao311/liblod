@@ -5,7 +5,8 @@ var path = require('path');
 var nunjucks = require('nunjucks');
 var io = require('socket.io')(http);
 
-var rooms;
+var rooms = [];
+var users = [];
 
 
 nunjucks.configure('views', {
@@ -28,10 +29,12 @@ app.get('/reg', function(req, res) {
   var queries = req.query;
   var name = queries.name;
   var room = queries.room;
+  rooms.push(room);
+  users.push(name);
 
 
-    // res.send("name: " + name + "<br>room: " + room)
-    res.render(__dirname + '/views/index.njk');
+  // res.send("name: " + name + "<br>room: " + room)
+  res.render(__dirname + '/views/index.njk', {roomname: room, username: name});
 })
 
 http.listen(1111, function() {
@@ -49,4 +52,8 @@ io.on('connection', function(socket) {
   socket.on('disconnect', function(){
     console.log('blod disconnected');
   });
+});
+
+io.use(function(socket) {
+  console.log('name: ', socket.handshake.query);
 });
