@@ -1,7 +1,6 @@
 $(document).ready(function() {
     var room = $("#welcome").val();
-    // maybe put this in the in teh doc
-    var socket = io('/' + room);
+
     console.log(room);
     console.log("here");
     socket.emit('connect room', 'uhh');
@@ -23,8 +22,8 @@ $(document).ready(function() {
     });
 
     socket.on('user joined', function(msg) {
+        console.log('her2e');
         log(msg);
-
     });
 
     function log(msg) {

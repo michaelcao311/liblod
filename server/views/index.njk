@@ -14,16 +14,8 @@
         <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
         <script> 
             var socket = io('/{{ roomname }}');
-            socket.on('connect', function(socket) {
-                console.log('connected');
-            });
-            socket.on('connect-error', function(socket) {
-                console.log('connect error');
-            });
         </script> 
         <script src="../chat.js"></script>    
-
-
     </body>
 </html>
 

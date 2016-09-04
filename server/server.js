@@ -7,7 +7,7 @@ var nunjucks = require('nunjucks');
 var io = require('socket.io')(http);
 
 app.use(express.static(__dirname));
-
+var rooms = []
 nunjucks.configure('views', {
   autoescape: true,
   express: app
@@ -25,7 +25,10 @@ app.get('/reg', function(req, res) {
   var queries = req.query;
   var name = queries.name;
   var room = queries.room;
-  makeRoom(room);
+  if (rooms.indexOf(room) == -1) {
+    rooms.push(room);
+    makeRoom(room);
+  }
   // res.send("name: " + name + "<br>room: " + room)
   res.render(__dirname + '/views/index.njk', {roomname: room, username: name});
 
