@@ -7,7 +7,10 @@ var nunjucks = require('nunjucks');
 var io = require('socket.io')(http);
 
 app.use(express.static(__dirname));
+// Stores the names of all the rooms...
+// Perhaps should be a map of Key: Room Name Value: List of Users
 var rooms = []
+
 nunjucks.configure('views', {
   autoescape: true,
   express: app

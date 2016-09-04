@@ -6,7 +6,7 @@
     <link href="../css/room.css" rel="stylesheet">
     </head>
     <body>
-        <h1 id='welcome' value={{username}}> {{roomname}}</h1>
+        <h1 id='welcome' value={{username}}> Welcome to Room: {{roomname}}!</h1>
         <form id="chat"> 
             <input type="text" id="txt"> </input>
             <input type="submit"> </input>
@@ -16,6 +16,8 @@
         <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
         <script> 
             var socket = io('/{{ roomname }}');
+            <--! probably a better way, better to store the username on server side
+                than to send it to the client then back to store on the server...--!>
             socket.emit('connect room', "{{username}}");
         </script> 
         <script src="../chat.js"></script>    
