@@ -46,22 +46,23 @@ function makeRoom(room) {
     console.log("make room" + room);
     chat.on('connection', function(socket) {
         numUsers += 1;
-        socket.on('connect room', function(msg) {
+        socket.on('connect room', function(usr) {
+            socket.username = usr
             console.log('user connected to the room');
             console.log(numUsers);
             console.log('blob: ' + numUsers + ' users online');
             // Eventually replace these with the username
-            chat.emit('user joined', 'user joined the chat');
+            chat.emit('user joined', socket.username + ' joined the chat');
         });
         socket.on('disconnect', function(){
              console.log('blod disconnected from chat');
              numUsers -= 1;
              // eventually replace these with the username
-             chat.emit('user left', 'user left the chat');
+             chat.emit('user left', socket.username + ' left the chat');
         });
         socket.on('chat message', function(msg) {
             console.log(msg);
-            chat.emit('chat recieved', msg);
+            chat.emit('chat recieved', msg, socket.username);
         });
     });
 }

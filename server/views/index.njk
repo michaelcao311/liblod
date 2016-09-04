@@ -2,9 +2,11 @@
 <html>
     <head>
     <title> reg </title>
+        <link href="https://fonts.googleapis.com/css?family=Bungee+Shade|Source+Sans+Pro:300" rel="stylesheet">
+    <link href="../css/room.css" rel="stylesheet">
     </head>
     <body>
-        <h1 id='welcome' value={{roomname}}> {{roomname}}</h1>
+        <h1 id='welcome' value={{username}}> {{roomname}}</h1>
         <form id="chat"> 
             <input type="text" id="txt"> </input>
             <input type="submit"> </input>
@@ -14,6 +16,7 @@
         <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
         <script> 
             var socket = io('/{{ roomname }}');
+            socket.emit('connect room', "{{username}}");
         </script> 
         <script src="../chat.js"></script>    
     </body>

@@ -1,20 +1,14 @@
 $(document).ready(function() {
-    var room = $("#welcome").val();
-
-    console.log(room);
-    console.log("here");
-    socket.emit('connect room', 'uhh');
 
     $('form').submit(function(){
         socket.emit('chat message', $('#txt').val());
-        console.log('yo');
         $('#txt').val('');
         return false;
     });
 
-    socket.on('chat recieved', function(msg) {
+    socket.on('chat recieved', function(msg, username) {
         console.log('here');
-        log(msg);    
+        log(username + ": " + msg);    
     });
 
     socket.on('user left', function(msg) {
@@ -22,7 +16,6 @@ $(document).ready(function() {
     });
 
     socket.on('user joined', function(msg) {
-        console.log('her2e');
         log(msg);
     });
 
