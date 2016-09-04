@@ -4,12 +4,14 @@ var http = require('http').Server(app);
 var path = require('path');
 var nunjucks = require('nunjucks');
 
+const util = require('util');
+
 var io = require('socket.io')(http);
 
 app.use(express.static(__dirname));
 // Stores the names of all the rooms...
 // Perhaps should be a map of Key: Room Name Value: List of Users
-var rooms = []
+var rooms = {}; 
 
 nunjucks.configure('views', {
   autoescape: true,
@@ -28,10 +30,11 @@ app.get('/reg', function(req, res) {
   var queries = req.query;
   var name = queries.name;
   var room = queries.room;
-  if (rooms.indexOf(room) == -1) {
-    rooms.push(room);
-    makeRoom(room);
-  }
+  // if (rooms.indexOf(room) == -1) {
+  //   rooms.push(room);
+  //   makeRoom(room);
+  // }
+  if (!(room in rooms)) makeRoom(room);
   // res.send("name: " + name + "<br>room: " + room)
   res.render(__dirname + '/views/index.njk', {roomname: room, username: name});
 
@@ -43,6 +46,7 @@ http.listen(1111, function() {
 
 // Code for the Chat Room
 function makeRoom(room) {
+    rooms[room] = {};
     // namespace just for a specific chat room
     var chat = io.of('/' + room);
     var numUsers = 0
@@ -50,18 +54,24 @@ function makeRoom(room) {
     chat.on('connection', function(socket) {
         numUsers += 1;
         socket.on('connect room', function(usr) {
-            socket.username = usr
+            socket.username = usr;
+            rooms[room][socket.id] = usr;
             console.log('user connected to the room');
+            console.log('rooms: ' + util.inspect(rooms, false, null));
             console.log(numUsers);
-            console.log('blob: ' + numUsers + ' users online');
+            console.log(room + ': ' + numUsers + ' users online');
             // Eventually replace these with the username
-            chat.emit('user joined', socket.username + ' joined the chat');
+            chat.emit('user joined', socket.id + ' joined the chat');
         });
         socket.on('disconnect', function(){
-             console.log('blod disconnected from chat');
-             numUsers -= 1;
-             // eventually replace these with the username
-             chat.emit('user left', socket.username + ' left the chat');
+            console.log('blod disconnected from chat');
+            numUsers -= 1;
+            // eventually replace these with the username
+            delete rooms[room][socket.id];
+            if (Object.keys(rooms[room]).length == 0) delete rooms[room];
+            chat.emit('user left', socket.username + ' left the chat');
+
+            console.log('rooms: ' + util.inspect(rooms, false, null));
         });
         socket.on('chat message', function(msg) {
             console.log(msg);
