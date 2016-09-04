@@ -3,99 +3,75 @@ var app = express();
 var http = require('http').Server(app);
 var path = require('path');
 var nunjucks = require('nunjucks');
+
 var io = require('socket.io')(http);
 
-var roomnames = new Array();
-var rooms = new Map();
-var users = [];
-var namespaces = [];
-console.log(1, rooms);
+app.use(express.static(__dirname));
+// Stores the names of all the rooms...
+// Perhaps should be a map of Key: Room Name Value: List of Users
+var rooms = []
 
 nunjucks.configure('views', {
   autoescape: true,
   express: app
 });
 
-app.use(express.static(__dirname + '/views'));
-app.use(express.static(__dirname));
-
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/home.html', function (err) {
     if (err) console.log(err);
-    else console.log('jtb');
+    else 
+      console.log('jtb');
   });
 });
 
-app.get('/inbetween', function (req, res) {
-  if (roomnames.indexOf(req.query.room) === -1) {
-    makeNsp(req.query.room);
-  }
-  res.redirect('/reg?room=' + req.query.room + '&name=' + req.query.name);
-});
-
-app.get('/reg', function (req, res) {
+app.get('/reg', function(req, res) {
   var queries = req.query;
   var name = queries.name;
   var room = queries.room;
-  console.log('roomnames: ', roomnames);
-  console.log('users: ', users);
-  rooms[room].push(name);
-  users.push(name);
-
-  console.log('namespaces: ' + namespaces[0]);
-
+  if (rooms.indexOf(room) == -1) {
+    rooms.push(room);
+    makeRoom(room);
+  }
   // res.send("name: " + name + "<br>room: " + room)
   res.render(__dirname + '/views/index.njk', {roomname: room, username: name});
+
 })
 
 http.listen(1111, function() {
   console.log('listening at localhost:1111');
 });
 
-// io.use(function(socket, next) {
-//   // console.log('query: ', socket.handshake.query);
-//   next();
-// });
-// io.use(function(socket, next) {
-//   var rName = socket.handshake.query.roomname;
-//   var uName = socket.handshake.query.name;
-//   // console.log('rooms: ' + rooms)
-
-//   rooms[rName].push(uName);
-//   } 
-
-//   console.log('namespaces: ' + namespaces);
-// });
-
-// io.on('connection', function(socket) {
-//   var id = socket.id;
-
-//   console.log('blob');
-//   socket.on('chat message', function(msg) {
-//     console.log(msg);
-//     io.emit('chat recieved', msg);
-//   });
-//   socket.on('disconnect', function(){
-//     console.log('blod disconnected');
-//   });
-// });
-
-var makeNsp = function(name) {
-  // console.log('rooms: ' + rooms);
-  var nsp = io.of('/' + name);
-  nsp.on('connection', function(socket){
-    console.log('someone connected to ' + name);
-    console.log('users: ' + rooms[name]);
-    socket.on('chat message', function(msg) {
-      console.log(msg);
-      nsp.emit('chat recieved', msg);
+// Code for the Chat Room
+function makeRoom(room) {
+    // namespace just for a specific chat room
+    var chat = io.of('/' + room);
+    var numUsers = 0
+    console.log("make room" + room);
+    chat.on('connection', function(socket) {
+        numUsers += 1;
+        socket.on('connect room', function(usr) {
+            socket.username = usr
+            console.log('user connected to the room');
+            console.log(numUsers);
+            console.log('blob: ' + numUsers + ' users online');
+            // Eventually replace these with the username
+            chat.emit('user joined', socket.username + ' joined the chat');
+        });
+        socket.on('disconnect', function(){
+             console.log('blod disconnected from chat');
+             numUsers -= 1;
+             // eventually replace these with the username
+             chat.emit('user left', socket.username + ' left the chat');
+        });
+        socket.on('chat message', function(msg) {
+            console.log(msg);
+            chat.emit('chat recieved', msg, socket.username);
+        });
     });
-    socket.on('disconnect', function() {
-      console.log('someone disconnected');
-    });
-  });
-  console.log('namespace made: ' + name);
-  namespaces.push(nsp);
-  roomnames.push(name);
-  rooms[name] = new Array();
 }
+
+io.on('connection', function(socket) {
+    socket.on('disconnect', function(){
+         console.log('blod disconnected from a page');
+    });
+});
