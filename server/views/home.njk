@@ -17,8 +17,20 @@
     <input type="text" name="room">
     <br>
     <input id="submitter" type="submit" value="Submit!"> 
+
+    <!-- not working below -->
+    <!-- TODO: make it work with list -->
+<!--     <select name="room">
+      {% for room in renderedRooms %}
+        <option value="{{ room }}">{{ room }}</option>
+      {% endfor %}
+    </select> -->
+
+
   </form>
-    <script src="/socket.io/socket.io.js"></script>
-  <script src="client.js"></script> 
+  <!-- <script src="/home.js"></script> -->
+  <script src="nunjucks.js"></script>
+<!--     <script src="/socket.io/socket.io.js"></script>
+  <script src="client.js"></script>  -->
 
 </body>

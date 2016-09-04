@@ -19,11 +19,15 @@ nunjucks.configure('views', {
 });
 
 app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/home.html', function (err) {
-    if (err) console.log(err);
-    else 
-      console.log('jtb');
-  });
+  console.log('rooms: ' + util.inspect(rooms, false, null));
+
+  // render part not working, neither is callback function
+  res.render(__dirname + '/views/home.njk', {renderedRooms: rooms}
+  //   function (err) {
+  //   if (err) console.log(err);
+  //   else console.log('jtb');
+  // }
+  );
 });
 
 app.get('/reg', function(req, res) {
@@ -61,15 +65,15 @@ function makeRoom(room) {
             console.log(numUsers);
             console.log(room + ': ' + numUsers + ' users online');
             // Eventually replace these with the username
-            chat.emit('user joined', socket.id + ' joined the chat');
+            chat.emit('user joined', rooms[room][socket.id] + ' joined the chat');
         });
         socket.on('disconnect', function(){
             console.log('blod disconnected from chat');
             numUsers -= 1;
             // eventually replace these with the username
+            chat.emit('user left', room[room][socket.id] + ' left the chat');
             delete rooms[room][socket.id];
             if (Object.keys(rooms[room]).length == 0) delete rooms[room];
-            chat.emit('user left', socket.username + ' left the chat');
 
             console.log('rooms: ' + util.inspect(rooms, false, null));
         });
