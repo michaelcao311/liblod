@@ -18,14 +18,21 @@
     <br>
     <input id="submitter" type="submit" value="Submit!"> 
 
-    <!-- not working below -->
-    <!-- TODO: make it work with list -->
-<!--     <select name="room">
+  </form>
+  <form action='/reg' method='get'>
+        
+    <h3> <strong>Name: </strong> </h3>
+    <br>
+    <input type="text" name="name">
+    <br>
+
+    <select name="room">
+        <option> -- </option>
       {% for room in renderedRooms %}
         <option value="{{ room }}">{{ room }}</option>
       {% endfor %}
-    </select> -->
-
+    </select> 
+    <input id="submitter" type="submit" value="Submit!"> 
 
   </form>
   <!-- <script src="/home.js"></script> -->

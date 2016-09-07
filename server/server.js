@@ -20,9 +20,10 @@ nunjucks.configure('views', {
 
 app.get('/', function (req, res) {
   console.log('rooms: ' + util.inspect(rooms, false, null));
+  room_list = Object.keys(rooms);
 
   // render part not working, neither is callback function
-  res.render(__dirname + '/views/home.njk', {renderedRooms: rooms}
+  res.render(__dirname + '/views/home.njk', {renderedRooms: room_list}
   //   function (err) {
   //   if (err) console.log(err);
   //   else console.log('jtb');
@@ -33,12 +34,16 @@ app.get('/', function (req, res) {
 app.get('/reg', function(req, res) {
   var queries = req.query;
   var name = queries.name;
-  var room = queries.room;
+  var room = queries.room
+  console.log("AHHH" + room);
   // if (rooms.indexOf(room) == -1) {
   //   rooms.push(room);
   //   makeRoom(room);
   // }
-  if (!(room in rooms)) makeRoom(room);
+  if (!(room in rooms)) {
+    console.log('We wanna make this ' + room);
+    makeRoom(room);
+  }
   // res.send("name: " + name + "<br>room: " + room)
   res.render(__dirname + '/views/index.njk', {roomname: room, username: name});
 
@@ -71,7 +76,7 @@ function makeRoom(room) {
             console.log('blod disconnected from chat');
             numUsers -= 1;
             // eventually replace these with the username
-            chat.emit('user left', room[room][socket.id] + ' left the chat');
+            chat.emit('user left', rooms[room][socket.id] + ' left the chat');
             delete rooms[room][socket.id];
             if (Object.keys(rooms[room]).length == 0) delete rooms[room];
 
