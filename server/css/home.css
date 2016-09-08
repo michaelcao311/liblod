@@ -10,18 +10,19 @@ h3, h2 {
     font-family: 'Source Sans Pro', sans-serif;
     margin-bottom: 0px;
 }
+
 #submitter {
     margin-top: 24px;
 
 }
 
 #room_name {
-	display: inline-block;
+	 display: inline-block;
 }
 #cap {
-	display: inline-block;
+	 display: inline-block;
 }
 
 #room_name, #names, #cap, #players {
-text-align:center;
+    text-align:center;
 }

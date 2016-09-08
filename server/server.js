@@ -86,6 +86,17 @@ function makeRoom(room) {
             console.log(msg);
             chat.emit('chat recieved', msg, socket.username);
         });
+        socket.on('play game', function(game) {
+            if (!('games' in rooms[room])) {
+                rooms[room]['games'] = [];
+            }
+            switch(game) {
+                case 'tictactoe':
+                    rooms[room]['games'].push('tictactoe');
+                    break;
+            }
+            console.log('rooms: ' + util.inspect(rooms, false, null));
+        });
     });
 }
 

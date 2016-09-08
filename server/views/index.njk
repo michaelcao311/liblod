@@ -15,7 +15,8 @@
         <form id="chat"> 
             <input type="text" id="txt"> </input>
             <input type="submit"> </input>
-         </form>
+        </form>
+        <button id="playtictactoe">play</button>
         <h1 id='chat_result'> </h1>
         </div>
         <div id="gamebox" class="col-sm-8">
@@ -23,6 +24,23 @@
         </div>
         </div>
 
+        <table class="tictactoe">
+            <tr>
+                <td id="tl"></td>
+                <td id="tm"></td>
+                <td id="tr"></td>
+            </tr>
+            <tr>
+                <td id="ml"></td>
+                <td id="mm"></td>
+                <td id="mr"></td>
+            </tr>
+            <tr>
+                <td id="bl"></td>
+                <td id="bm"></td>
+                <td id="b"r></td>
+            </tr>
+        </table>
 
         <script src="/socket.io/socket.io.js"></script>
         <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
