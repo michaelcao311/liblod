@@ -50,10 +50,10 @@ td {
     border-top-style: dotted;
     border-left-style: dotted;
 }
-#square {
+.square {
 	height:100%;
 }
-#square_btn {
+.square_btn {
 	height:100%;
 }
 .tictactoe {
