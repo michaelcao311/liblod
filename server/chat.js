@@ -21,17 +21,36 @@ $(document).ready(function() {
             console.log(square.attr('id'));
             square.text(current);
             if (current == 'X') {
+                socket.emit('move', square.attr('id'), current);
                 square.removeClass('btn-success');
                 square.addClass('btn-danger');
                 current = 'O';
             } else {
+                socket.emit('move', square.attr('id'), current);
                 square.removeClass('btn-success');
                 square.addClass('btn-warning');
                 current = 'X';
             }
         }
     });
+    socket.on('moved', function(button, move) {
+        console.log("EHHHHHHH");
+        search_for = '#' + button;
+        console.log("search for " + search_for);
+        square = $(search_for)
+        square.text(move);
+        if (move == 'X') {
+            square.removeClass('btn-success');
+            square.addClass('btn-danger');
+            current = 'O';
+        }
+        else {
+            square.removeClass('btn-success');
+            square.addClass('btn-warning');
+            current = 'X';
+        }
 
+    });
     socket.on('chat recieved', function(msg, username) {
         console.log('here');
         log(username + ": " + msg);    

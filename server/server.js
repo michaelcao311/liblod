@@ -97,6 +97,11 @@ function makeRoom(room) {
             }
             console.log('rooms: ' + util.inspect(rooms, false, null));
         });
+        socket.on('move', function(button, move) {
+            console.log("AHHHHHHHHHHHHHHHHHHHHHHHH");
+            chat.emit('moved', button, move);
+
+        });
     });
 }
 
