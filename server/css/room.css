@@ -1,6 +1,62 @@
-html {
+h1, h2, h3 {
     font-family: 'Source Sans Pro', sans-serif;
 }
 li {
     list-style-type: none;
 }
+#chatbox {
+	  word-wrap: break-word;
+}
+td {
+    height: 100px;
+    width: 100px;
+}
+#tl {
+    border-right-style: dotted;
+    border-bottom-style: dotted;
+}
+#tm {
+    border-left-style: dotted;
+    border-bottom-style: dotted;
+    border-right-style: dotted;
+}
+#tr {
+    border-left-style: dotted;
+    border-bottom-style: dotted;
+}
+#ml {
+    border-top-style: dotted;
+    border-right-style: dotted;
+    border-bottom-style: dotted;
+}
+#mm {
+    border-style: dotted;
+}
+#mr {
+    border-top-style: dotted;
+    border-left-style: dotted;
+    border-bottom-style: dotted;
+}
+#bl {
+    border-top-style: dotted;
+    border-right-style: dotted;
+}
+#bm {
+    border-left-style: dotted;
+    border-top-style: dotted;
+    border-right-style: dotted;
+}
+#br {
+    border-top-style: dotted;
+    border-left-style: dotted;
+}
+.square {
+	height:100%;
+}
+.square_btn {
+	height:100%;
+}
+.tictactoe {
+    float: right;
+}
+

@@ -20,18 +20,18 @@ nunjucks.configure('views', {
 
 app.get('/', function (req, res) {
   console.log('rooms: ' + util.inspect(rooms, false, null));
+  room_caps_list = []
+  room_caps = {}
+  for (var room in rooms) {
+      room_caps[room] = Object.keys(rooms[room]).length;
+  }
   room_list = Object.keys(rooms);
 
-  // render part not working, neither is callback function
-  res.render(__dirname + '/views/home.njk', {renderedRooms: room_list}
-  //   function (err) {
-  //   if (err) console.log(err);
-  //   else console.log('jtb');
-  // }
+  res.render(__dirname + '/views/home.njk', {renderedRooms: room_caps}
   );
 });
 
-app.get('/reg', function(req, res) {
+app.get('/room', function(req, res) {
   var queries = req.query;
   var name = queries.name;
   var room = queries.room
@@ -85,6 +85,22 @@ function makeRoom(room) {
         socket.on('chat message', function(msg) {
             console.log(msg);
             chat.emit('chat recieved', msg, socket.username);
+        });
+        socket.on('play game', function(game) {
+            if (!('games' in rooms[room])) {
+                rooms[room]['games'] = [];
+            }
+            switch(game) {
+                case 'tictactoe':
+                    rooms[room]['games'].push('tictactoe');
+                    break;
+            }
+            console.log('rooms: ' + util.inspect(rooms, false, null));
+        });
+        socket.on('move', function(button, move) {
+            console.log("AHHHHHHHHHHHHHHHHHHHHHHHH");
+            chat.emit('moved', button, move);
+
         });
     });
 }

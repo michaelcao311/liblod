@@ -2,16 +2,46 @@
 <html>
     <head>
     <title> reg </title>
+
+        <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
         <link href="https://fonts.googleapis.com/css?family=Bungee+Shade|Source+Sans+Pro:300" rel="stylesheet">
     <link href="../css/room.css" rel="stylesheet">
     </head>
     <body>
+        <div class="row">
+        <div id="chatbox" class="col-sm-4">
         <h1 id='welcome' value={{username}}> Welcome to Room: {{roomname}}!</h1>
         <form id="chat"> 
             <input type="text" id="txt"> </input>
             <input type="submit"> </input>
-         </form>
+        </form>
+        <button id="playtictactoe">play</button>
         <h1 id='chat_result'> </h1>
+        </div>
+        <div id="gamebox" class="col-sm-8">
+            <h3> Games </h3>
+        </div>
+        </div>
+
+        <table class="tictactoe">
+            <tr>
+                <td id="tl"><div class="square"> <button type="button" id="sq1" class="btn btn-success btn-block square_btn"> </button> </div></td>
+                <td id="tm"><div class="square"> <button type="button" id="sq2" class="btn btn-success btn-block square_btn"> </button> </div></td>
+                <td id="tr"><div class="square"> <button type="button" id="sq3" class="btn btn-success btn-block square_btn"> </button> </div></td>
+            </tr>
+            <tr>
+                <td id="ml"><div class="square"> <button type="button" id="sq4" class="btn btn-success btn-block square_btn"> </button> </div></td>
+                <td id="mm"><div class="square"> <button type="button" id="sq5" class="btn btn-success btn-block square_btn"> </button> </div></td>
+                <td id="mr"><div class="square"> <button type="button" id="sq6" class="btn btn-success btn-block square_btn"> </button> </div></td>
+            </tr>
+            <tr>
+                <td id="bl"><div class="square"> <button type="button" id="sq7" class="btn btn-success btn-block square_btn"> </button> </div></td>
+                <td id="bm"><div class="square"> <button type="button" id="sq8" class="btn btn-success btn-block square_btn"> </button> </div></td>
+                <td id="br"><div class="square"> <button type="button" id="sq9" class="btn btn-success btn-block square_btn"> </button> </div></td>
+            </tr>
+        </table>
+
         <script src="/socket.io/socket.io.js"></script>
         <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
         <script> 
