@@ -131,34 +131,34 @@ io.on('connection', function(socket) {
         console.log('connection info: ' + util.inspect(info, false, null));
         var room = info.room;
         people.push(new Person(socket.id, info.name, room));
-        console.log('people: ' + util.inspect(people, false, null));
 
         socket.join(info.room);
-        console.log('findwhere: ' + !_.findWhere(rooms, {roomname: room}));
+        // console.log('findwhere: ' + !_.findWhere(rooms, {roomname: room}));
         if (!_.findWhere(rooms, {roomname: room})) {
             rooms.push(new Room(room));
         }
 
-        console.log('new room: ' + util.inspect(new Room('bloom')));
-        console.log('findwhere: ' + !_.findWhere(rooms, {roomname: room}));
+        // console.log('new room: ' + util.inspect(new Room('bloom')));
+        // console.log('findwhere: ' + !_.findWhere(rooms, {roomname: room}));
+        // console.log('search: {roomname: ' + room + '}');
+        // console.log('indexOf: ' + _.findIndex(rooms, {roomname: room}));
+        // console.log('rooms[indexofroom]: ' + util.inspect(rooms[_.findIndex(rooms, {roomname: room})]));
+        rooms[_.findIndex(rooms, {roomname: room})].users.push({"id": socket.id, "name": info.name});
+
+        console.log('people: ' + util.inspect(people, false, null));
         console.log('rooms: ' + util.inspect(rooms, false, null));
-        console.log('search: {roomname: ' + room + '}');
-        console.log('indexOf: ' + _.findIndex(rooms, {roomname: room}));
-        console.log('rooms[indexofroom]: ' + util.inspect(rooms[_.indexOf(rooms, {roomname: room})]));
-        rooms[_.indexOf(rooms, {roomname: room})].users.push({"id": socket.id, "name": info.name});
-
     });
-    socket.on('disconnect', function(){
-        console.log('blod disconnected from a page');
-        var person = getObjectThatHasValue(people, 'id', socket.id);
-        for (let room of person[rooms]) {
+    socket.on('disconnect', function(brocket){
 
+        console.log(brocket.id + ' disconnected from a page');
+        for (let room of rooms) {
+            if (_.findIndex(room.users, {id: socket.id} != -1)) {
+                room.users.splice(_.findIndex(room.users, {id: socket.id}), 1);
+            }
         }
+        people.splice(_.findIndex(people, {id: socket.id}), 1);
+        console.log('people: ' + util.inspect(people, false, null));
+        console.log('rooms: ' + util.inspect(rooms, false, null));
+
     });
 });
-
-function getObjectThatHasValue(object, key, value) {
-    for (let item of object) {
-        if (item[key] == value) return item[key];
-    } return null;
-}
