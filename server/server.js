@@ -139,10 +139,12 @@ io.on('connection', function(socket) {
             rooms.push(new Room(room));
         }
 
+        console.log('new room: ' + util.inspect(new Room('bloom')));
         console.log('findwhere: ' + !_.findWhere(rooms, {roomname: room}));
         console.log('rooms: ' + util.inspect(rooms, false, null));
         console.log('search: {roomname: ' + room + '}');
-        console.log('indexOf: ' + _.indexOf(rooms, {roomname: room}));
+        console.log('indexOf: ' + _.findIndex(rooms, {roomname: room}));
+        console.log('rooms[indexofroom]: ' + util.inspect(rooms[_.indexOf(rooms, {roomname: room})]));
         rooms[_.indexOf(rooms, {roomname: room})].users.push({"id": socket.id, "name": info.name});
 
     });
