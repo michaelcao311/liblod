@@ -3,6 +3,7 @@ var app = express();
 var http = require('http').Server(app);
 var path = require('path');
 var nunjucks = require('nunjucks');
+var _ = require('underscore');
 
 const util = require('util');
 
@@ -11,13 +12,18 @@ var io = require('socket.io')(http);
 app.use(express.static(__dirname));
 // Stores the names of all the rooms...
 // Perhaps should be a map of Key: Room Name Value: List of Users
-var rooms = {}; 
+var rooms = []; 
 var people = [];
 
 function Person(id, name, firstRoom) {
     this.id = id;
     this.name = name;
     this.rooms = [firstRoom];
+}
+
+function Room(roomname) {
+    this.roomname = roomname;
+    this.users = [];
 }
 
 nunjucks.configure('views', {
@@ -121,22 +127,30 @@ io.on('connection', function(socket) {
     socket.on('connect room', function(info) {
         // console.log(info);
         info = JSON.parse(info);
+
         console.log('connection info: ' + util.inspect(info, false, null));
         var room = info.room;
         people.push(new Person(socket.id, info.name, room));
         console.log('people: ' + util.inspect(people, false, null));
+
         socket.join(info.room);
-        if (!(room in rooms)) {
-            rooms[room] = {users: []};
+        console.log('findwhere: ' + !_.findWhere(rooms, {roomname: room}));
+        if (!_.findWhere(rooms, {roomname: room})) {
+            rooms.push(new Room(room));
         }
-        rooms[room].users.push({"id": socket.id, "name": info.name});
+
+        console.log('findwhere: ' + !_.findWhere(rooms, {roomname: room}));
         console.log('rooms: ' + util.inspect(rooms, false, null));
+        console.log('search: {roomname: ' + room + '}');
+        console.log('indexOf: ' + _.indexOf(rooms, {roomname: room}));
+        rooms[_.indexOf(rooms, {roomname: room})].users.push({"id": socket.id, "name": info.name});
+
     });
     socket.on('disconnect', function(){
         console.log('blod disconnected from a page');
         var person = getObjectThatHasValue(people, 'id', socket.id);
         for (let room of person[rooms]) {
-            
+
         }
     });
 });
