@@ -3,6 +3,17 @@
     <head>
     <title> reg </title>
 
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+        <script> 
+            // <!-- probably a better way, better to store the username on server side than to send it to the client then back to store on the server...-->
+            // socket.emit('connect room', "{{username}}");
+            var socket = io(); 
+            socket.emit('connect room', '{"room": "{{roomname}}", "name": "{{name}}"}');
+            console.log('emitted');
+
+        </script> 
+        <script src="../chat.js"></script>   
         <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
         <link href="https://fonts.googleapis.com/css?family=Bungee+Shade|Source+Sans+Pro:300" rel="stylesheet">
@@ -42,14 +53,7 @@
             </tr>
         </table>
 
-        <script src="/socket.io/socket.io.js"></script>
-        <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
-        <script> 
-            var socket = io('/{{ roomname }}');
-            <!-- probably a better way, better to store the username on server side than to send it to the client then back to store on the server...-->
-            socket.emit('connect room', "{{username}}");
-        </script> 
-        <script src="../chat.js"></script>    
+
     </body>
 </html>
 

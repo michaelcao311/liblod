@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    
     $('#playtictactoe').attr('disabled', false);
 
     $('form').submit(function(){
@@ -68,6 +69,11 @@ $(document).ready(function() {
 
     socket.on('user joined', function(msg) {
         log(msg);
+    });
+
+    socket.on('join room', function(msg) {
+        socket.join(JSON.parse(msg).room);
+        socket.to(JSON.parse(msg).room).emit('joined', JSON.parse(msg));
     });
 
     function log(msg) {

@@ -12,6 +12,13 @@ app.use(express.static(__dirname));
 // Stores the names of all the rooms...
 // Perhaps should be a map of Key: Room Name Value: List of Users
 var rooms = {}; 
+var people = [];
+
+function Person(id, name, firstRoom) {
+    this.id = id;
+    this.name = name;
+    this.rooms = [firstRoom];
+}
 
 nunjucks.configure('views', {
   autoescape: true,
@@ -40,73 +47,102 @@ app.get('/room', function(req, res) {
   //   rooms.push(room);
   //   makeRoom(room);
   // }
-  if (!(room in rooms)) {
-    console.log('We wanna make this ' + room);
-    makeRoom(room);
-  }
+  // if (!(room in rooms)) {
+  //   console.log('We wanna make this ' + room);
+  //   makeRoom(room);
+  // }
   // res.send("name: " + name + "<br>room: " + room)
-  res.render(__dirname + '/views/index.njk', {roomname: room, username: name});
-
-})
+  res.render(__dirname + '/views/index.njk', {roomname: room, name: name});
+  var joinInfo = {
+      'room': queries.room,
+      'name': queries.name
+  };
+  io.emit()
+});
 
 http.listen(1111, function() {
   console.log('listening at localhost:1111');
 });
 
+
 // Code for the Chat Room
-function makeRoom(room) {
-    rooms[room] = {};
-    // namespace just for a specific chat room
-    var chat = io.of('/' + room);
-    var numUsers = 0
-    console.log("make room" + room);
-    chat.on('connection', function(socket) {
-        numUsers += 1;
-        socket.on('connect room', function(usr) {
-            socket.username = usr;
-            rooms[room][socket.id] = usr;
-            console.log('user connected to the room');
-            console.log('rooms: ' + util.inspect(rooms, false, null));
-            console.log(numUsers);
-            console.log(room + ': ' + numUsers + ' users online');
-            // Eventually replace these with the username
-            chat.emit('user joined', rooms[room][socket.id] + ' joined the chat');
-        });
-        socket.on('disconnect', function(){
-            console.log('blod disconnected from chat');
-            numUsers -= 1;
-            // eventually replace these with the username
-            chat.emit('user left', rooms[room][socket.id] + ' left the chat');
-            delete rooms[room][socket.id];
-            if (Object.keys(rooms[room]).length == 0) delete rooms[room];
+// function makeRoom(room) {
+//     rooms[room] = {};
+//     // namespace just for a specific chat room
+//     var chat = io.of('/' + room);
+//     var numUsers = 0
+//     console.log("make room" + room);
+//     chat.on('connection', function(socket) {
+//         numUsers += 1;
+//         socket.on('connect room', function(usr) {
+//             socket.username = usr;
+//             rooms[room][socket.id] = usr;
+//             console.log('user connected to the room');
+//             console.log('rooms: ' + util.inspect(rooms, false, null));
+//             console.log(numUsers);
+//             console.log(room + ': ' + numUsers + ' users online');
+//             // Eventually replace these with the username
+//             chat.emit('user joined', rooms[room][socket.id] + ' joined the chat');
+//         });
+//         socket.on('disconnect', function(){
+//             console.log('blod disconnected from chat');
+//             numUsers -= 1;
+//             // eventually replace these with the username
+//             chat.emit('user left', rooms[room][socket.id] + ' left the chat');
+//             delete rooms[room][socket.id];
+//             if (Object.keys(rooms[room]).length == 0) delete rooms[room];
 
-            console.log('rooms: ' + util.inspect(rooms, false, null));
-        });
-        socket.on('chat message', function(msg) {
-            console.log(msg);
-            chat.emit('chat recieved', msg, socket.username);
-        });
-        socket.on('play game', function(game) {
-            if (!('games' in rooms[room])) {
-                rooms[room]['games'] = [];
-            }
-            switch(game) {
-                case 'tictactoe':
-                    rooms[room]['games'].push('tictactoe');
-                    break;
-            }
-            console.log('rooms: ' + util.inspect(rooms, false, null));
-        });
-        socket.on('move', function(button, move) {
-            console.log("AHHHHHHHHHHHHHHHHHHHHHHHH");
-            chat.emit('moved', button, move);
+//             console.log('rooms: ' + util.inspect(rooms, false, null));
+//         });
+//         socket.on('chat message', function(msg) {
+//             console.log(msg);
+//             chat.emit('chat recieved', msg, socket.username);
+//         });
+//         socket.on('play game', function(game) {
+//             if (!('games' in rooms[room])) {
+//                 rooms[room]['games'] = [];
+//             }
+//             switch(game) {
+//                 case 'tictactoe':
+//                     rooms[room]['games'].push('tictactoe');
+//                     break;
+//             }
+//             console.log('rooms: ' + util.inspect(rooms, false, null));
+//         });
+//         socket.on('move', function(button, move) {
+//             console.log("AHHHHHHHHHHHHHHHHHHHHHHHH");
+//             chat.emit('moved', button, move);
 
-        });
-    });
-}
+//         });
+//     });
+// }
 
 io.on('connection', function(socket) {
+    socket.on('connect room', function(info) {
+        // console.log(info);
+        info = JSON.parse(info);
+        console.log('connection info: ' + util.inspect(info, false, null));
+        var room = info.room;
+        people.push(new Person(socket.id, info.name, room));
+        console.log('people: ' + util.inspect(people, false, null));
+        socket.join(info.room);
+        if (!(room in rooms)) {
+            rooms[room] = {users: []};
+        }
+        rooms[room].users.push({"id": socket.id, "name": info.name});
+        console.log('rooms: ' + util.inspect(rooms, false, null));
+    });
     socket.on('disconnect', function(){
-         console.log('blod disconnected from a page');
+        console.log('blod disconnected from a page');
+        var person = getObjectThatHasValue(people, 'id', socket.id);
+        for (let room of person[rooms]) {
+            
+        }
     });
 });
+
+function getObjectThatHasValue(object, key, value) {
+    for (let item of object) {
+        if (item[key] == value) return item[key];
+    } return null;
+}
