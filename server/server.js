@@ -123,11 +123,11 @@ io.on('connection', function(socket) {
         if (!_.findWhere(rooms, {roomname: socket.room})) {
             rooms.push(new Room(socket.room));
         }
-        rooms[_.findIndex(rooms, {roomname: socket.room})].users.push({"id": socket.id, "name": socket.name});
-
+        users = rooms[_.findIndex(rooms, {roomname: socket.room})].users;
+        users.push({"id": socket.id, "name": socket.name});
         console.log('people: ' + util.inspect(people, false, null));
         console.log('rooms: ' + util.inspect(rooms, false, null));
-        io.to(socket.room).emit('user joined', {"user": socket.name, "room": socket.room});
+        io.to(socket.room).emit('user joined', {"user": socket.name, "room": socket.room, "users": users});
     });
     socket.on('disconnect', function(){
         console.log(user_id + ' disconnected from a page');
@@ -139,20 +139,22 @@ io.on('connection', function(socket) {
                 room.users.splice(_.findIndex(room.users, {id: user_id}), 1);
                 if (room.users.length == 0) {
                     rooms.splice(i, 1);
-                }
+                } 
             }
         }
         people.splice(_.findIndex(people, {id: user_id}), 1);
-        console.log('people: ' + util.inspect(people, false, null));
-        console.log('rooms: ' + util.inspect(rooms, false, null));
-        io.to(socket.room).emit('user left', {"user": socket.name});
+        try {
+            users = rooms[_.findIndex(rooms, {roomname: socket.room})].users;
+            io.to(socket.room).emit('user left', {"user": socket.name, "users": users});
+        }   catch(err) {
+            io.to(socket.room).emit('user left', {"user": socket.name});
+        }
         socket.leave(socket.room);
     });
     socket.on('move', function(square, move) {
         io.to(socket.room).emit('moved', square, move);
     });
     socket.on('chat message', function(msg) {
-        console.log("CHAT RECIEVED");
         io.to(socket.room).emit('chat recieved', msg, socket.name);
     });
 });

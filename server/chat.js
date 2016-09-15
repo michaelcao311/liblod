@@ -66,14 +66,25 @@ $(document).ready(function() {
     });
 
     socket.on('user left', function(info) {
-        log(info.user + ' left');   
+        log(info.user + ' left');
+        updateUsers(info.users);
     });
 
     socket.on('user joined', function(info) {
         // Jquery automatically turns JSON into JSON
         log(info.user + ' joined');
+        updateUsers(info.users);
     });
-
+    
+    function updateUsers(users) {
+        result = '';
+        for (i = 0; i < users.length; i++) {
+            result += '<li>' + users[i].name + '</li>';
+        }
+        $("#users").html(result);
+        $("#usercount").text("Users Online: " + users.length);
+        console.log(result);
+    }
     function log(msg) {
         console.log('Got it');
         $('#chat_result').append($('<li>').text(msg));

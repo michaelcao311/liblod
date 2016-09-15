@@ -25,13 +25,20 @@
     <body>
         <div class="row">
         <div id="chatbox" class="col-sm-4">
-        <h1 id='welcome' value={{username}}> Welcome to Room: {{roomname}}!</h1>
+        <h1 id='welcome'> Welcome to Room: {{roomname}}!</h1>
         <form id="chat"> 
             <input type="text" id="txt"> </input>
             <input type="submit"> </input>
         </form>
         <button id="playtictactoe">play</button>
         <h1 id='chat_result'> </h1>
+        <div id='usersonline'> 
+                <h2 id='usercount'> Users Online: </h2>
+            <div id="users">
+                <h3> -- </h3>
+
+            </div>
+        </div>
         </div>
         <div id="gamebox" class="col-sm-8">
             <h3> Games </h3>
