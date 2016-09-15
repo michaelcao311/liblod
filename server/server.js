@@ -129,7 +129,6 @@ io.on('connection', function(socket) {
         console.log('rooms: ' + util.inspect(rooms, false, null));
     });
     socket.on('disconnect', function(){
-
         console.log(user_id + ' disconnected from a page');
         for (i = 0; i < rooms.length; i++) {
             room = rooms[i];
