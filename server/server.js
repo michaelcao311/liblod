@@ -10,9 +10,9 @@ const util = require('util');
 var io = require('socket.io')(http);
 
 app.use(express.static(__dirname));
-// Stores the names of all the rooms...
-// Perhaps should be a map of Key: Room Name Value: List of Users
+// list of all the rooms
 var rooms = []; 
+// list of all the people currently on the app
 var people = [];
 
 function Person(id, name, firstRoom) {
@@ -49,27 +49,13 @@ app.get('/room', function(req, res) {
   var name = queries.name;
   var room = queries.room
   console.log("AHHH" + room);
-  // if (rooms.indexOf(room) == -1) {
-  //   rooms.push(room);
-  //   makeRoom(room);
-  // }
-  // if (!(room in rooms)) {
-  //   console.log('We wanna make this ' + room);
-  //   makeRoom(room);
-  // }
-  // res.send("name: " + name + "<br>room: " + room)
   res.render(__dirname + '/views/index.njk', {roomname: room, name: name});
-  var joinInfo = {
-      'room': queries.room,
-      'name': queries.name
-  };
   io.emit()
 });
 
 http.listen(1111, function() {
   console.log('listening at localhost:1111');
 });
-
 
 // Code for the Chat Room
 // function makeRoom(room) {
@@ -124,8 +110,9 @@ http.listen(1111, function() {
 // }
 
 io.on('connection', function(socket) {
+    // saving the id for this session, hmmmm, maybe we need to have session variables or something
+    var user_id = socket.id
     socket.on('connect room', function(info) {
-        // console.log(info);
         info = JSON.parse(info);
 
         console.log('connection info: ' + util.inspect(info, false, null));
@@ -133,32 +120,27 @@ io.on('connection', function(socket) {
         people.push(new Person(socket.id, info.name, room));
 
         socket.join(info.room);
-        // console.log('findwhere: ' + !_.findWhere(rooms, {roomname: room}));
         if (!_.findWhere(rooms, {roomname: room})) {
             rooms.push(new Room(room));
         }
-
-        // console.log('new room: ' + util.inspect(new Room('bloom')));
-        // console.log('findwhere: ' + !_.findWhere(rooms, {roomname: room}));
-        // console.log('search: {roomname: ' + room + '}');
-        // console.log('indexOf: ' + _.findIndex(rooms, {roomname: room}));
-        // console.log('rooms[indexofroom]: ' + util.inspect(rooms[_.findIndex(rooms, {roomname: room})]));
         rooms[_.findIndex(rooms, {roomname: room})].users.push({"id": socket.id, "name": info.name});
 
         console.log('people: ' + util.inspect(people, false, null));
         console.log('rooms: ' + util.inspect(rooms, false, null));
     });
-    socket.on('disconnect', function(brocket){
+    socket.on('disconnect', function(){
 
-        console.log(brocket.id + ' disconnected from a page');
-        for (let room of rooms) {
-            if (_.findIndex(room.users, {id: socket.id} != -1)) {
-                room.users.splice(_.findIndex(room.users, {id: socket.id}), 1);
+        console.log(user_id + ' disconnected from a page');
+        for (i = 0; i < rooms.length; i++) {
+            room = rooms[i];
+            if (_.findIndex(room.users, {id: user_id} != -1)) {
+                console.log("AHHHHHH");
+                console.log(room);
+                room.users.splice(_.findIndex(room.users, {id: user_id}), 1);
             }
         }
-        people.splice(_.findIndex(people, {id: socket.id}), 1);
+        people.splice(_.findIndex(people, {id: user_id}), 1);
         console.log('people: ' + util.inspect(people, false, null));
         console.log('rooms: ' + util.inspect(rooms, false, null));
-
     });
 });
