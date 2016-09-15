@@ -148,4 +148,11 @@ io.on('connection', function(socket) {
         io.to(socket.room).emit('user left', {"user": socket.name});
         socket.leave(socket.room);
     });
+    socket.on('move', function(square, move) {
+        io.to(socket.room).emit('moved', square, move);
+    });
+    socket.on('chat message', function(msg) {
+        console.log("CHAT RECIEVED");
+        io.to(socket.room).emit('chat recieved', msg, socket.name);
+    });
 });
