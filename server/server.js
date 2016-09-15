@@ -115,17 +115,19 @@ io.on('connection', function(socket) {
         info = JSON.parse(info);
 
         console.log('connection info: ' + util.inspect(info, false, null));
-        var room = info.room;
-        people.push(new Person(socket.id, info.name, room));
+        socket.name = info.name;
+        socket.room = info.room;
+        people.push(new Person(socket.id, socket.name, socket.room));
 
-        socket.join(info.room);
-        if (!_.findWhere(rooms, {roomname: room})) {
-            rooms.push(new Room(room));
+        socket.join(socket.room);
+        if (!_.findWhere(rooms, {roomname: socket.room})) {
+            rooms.push(new Room(socket.room));
         }
-        rooms[_.findIndex(rooms, {roomname: room})].users.push({"id": socket.id, "name": info.name});
+        rooms[_.findIndex(rooms, {roomname: socket.room})].users.push({"id": socket.id, "name": socket.name});
 
         console.log('people: ' + util.inspect(people, false, null));
         console.log('rooms: ' + util.inspect(rooms, false, null));
+        io.to(socket.room).emit('user joined', {"user": socket.name, "room": socket.room});
     });
     socket.on('disconnect', function(){
         console.log(user_id + ' disconnected from a page');
@@ -143,5 +145,7 @@ io.on('connection', function(socket) {
         people.splice(_.findIndex(people, {id: user_id}), 1);
         console.log('people: ' + util.inspect(people, false, null));
         console.log('rooms: ' + util.inspect(rooms, false, null));
+        io.to(socket.room).emit('user left', {"user": socket.name});
+        socket.leave(socket.room);
     });
 });
