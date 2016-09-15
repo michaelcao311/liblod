@@ -148,12 +148,16 @@ io.on('connection', function(socket) {
         console.log('people: ' + util.inspect(people, false, null));
         console.log('rooms: ' + util.inspect(rooms, false, null));
     });
-    socket.on('disconnect', function(brocket){
-
-        console.log(brocket.id + ' disconnected from a page');
-        for (let room of rooms) {
-            if (_.findIndex(room.users, {id: socket.id} != -1)) {
-                room.users.splice(_.findIndex(room.users, {id: socket.id}), 1);
+    socket.on('disconnect', function(){
+        console.log(socket.id);
+        console.log(socket.id + ' disconnected from a page');
+        for (var i = 0; i < rooms.length; i++) {
+            var currentRoom = rooms[i];
+            if (_.findIndex(currentRoom.users, {id: socket.id} != -1)) {
+                currentRoom.users.splice(_.findIndex(currentRoom.users, {id: socket.id}), 1);
+                if (currentRoom.users.length == 0) {
+                    rooms.splice(i, 1);
+                }
             }
         }
         people.splice(_.findIndex(people, {id: socket.id}), 1);
