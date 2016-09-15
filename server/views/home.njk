@@ -21,14 +21,6 @@
     <br>
     <input id="roomtyper" type="text" name="room">
     <br>
-    <select id="roomselector" name="room">
-      <option> -- </option>
-      {% for room, cap in renderedRooms %}
-      <option class="roomoption" value="{{ room }}">
-        {{ room }}
-      </option>
-      {% endfor %}
-    </select> 
     <input id="submitter" type="submit" value="Submit!"> 
   </form>
 

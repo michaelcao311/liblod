@@ -33,12 +33,11 @@ nunjucks.configure('views', {
 
 app.get('/', function (req, res) {
   console.log('rooms: ' + util.inspect(rooms, false, null));
-  room_caps_list = []
   room_caps = {}
-  for (var room in rooms) {
-      room_caps[room] = Object.keys(rooms[room]).length;
+  for (i = 0; i < rooms.length; i++) {
+      roomname = rooms[i].roomname
+      room_caps[roomname] = rooms[i].users.length;
   }
-  room_list = Object.keys(rooms);
 
   res.render(__dirname + '/views/home.njk', {renderedRooms: room_caps}
   );
@@ -136,6 +135,9 @@ io.on('connection', function(socket) {
                 console.log("AHHHHHH");
                 console.log(room);
                 room.users.splice(_.findIndex(room.users, {id: user_id}), 1);
+                if (room.users.length == 0) {
+                    rooms.splice(i, 1);
+                }
             }
         }
         people.splice(_.findIndex(people, {id: user_id}), 1);
