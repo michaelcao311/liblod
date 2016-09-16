@@ -142,8 +142,7 @@ function joinRoom(info, user_id, socket, io) {
     users.push({"id": socket.id, "name": socket.name});
     console.log('people: ' + util.inspect(people, false, null));
     console.log('rooms: ' + util.inspect(rooms, false, null));
-    io.to(socket.room).emit('user joined', 
-                            {"user": socket.name, 
-                             "room": socket.room, 
-                             "users": users});
+    io.to(socket.room).emit('user joined', {"user": socket.name, 
+                                            "room": socket.room, 
+                                            "users": users});
 }
