@@ -44,11 +44,13 @@ app.get('/', function (req, res) {
   );
 });
 
+temp_name = ''
+
 app.get('/room', function(req, res) {
   var queries = req.query;
-  var name = queries.name;
+  var name = temp_name;
+  // TO DO add error if temp_name is still empty to prevent users from joining rooms without first entering in their name
   var room = queries.room
-  console.log("AHHH" + room);
   res.render(__dirname + '/views/index.njk', {roomname: room, name: name});
   io.emit()
 });
@@ -79,6 +81,7 @@ io.on('connection', function(socket) {
     });
     socket.on('waiting add name', function(name) {
         waitingRoom[_.findIndex(waitingRoom, {id: user_id})]['name'] = name;
+        temp_name = name;
         console.log('waiting room: ' + util.inspect(waitingRoom, false, null));
     })
 
@@ -109,8 +112,6 @@ io.on('connection', function(socket) {
             waitingRoom.splice(_.findIndex(waitingRoom, {id: user_id}), 1);
             socket.leave('waitingroom');
         }
-        
-
     });
 
     socket.on('move', function(square, move) {

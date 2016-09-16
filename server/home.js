@@ -14,6 +14,8 @@ $(document).ready(function() {
 
 function nameToRoom(event) {
     socket.emit('waiting add name', $('#name').val());
-    $('#nameform').hide();
-    $('#roomform').show();
+    var name = $('#nameform');
+    name.fadeOut(300, function() {
+        $('#roomform').fadeIn();
+    });
 }
