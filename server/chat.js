@@ -87,6 +87,6 @@ $(document).ready(function() {
     }
     function log(msg) {
         console.log('Got it');
-        $('#chat_result').append($('<li>').text(msg));
+        $('#chat_result').prepend($('<li>').text(msg));
     }
 });
