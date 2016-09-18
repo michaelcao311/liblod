@@ -1,6 +1,7 @@
 $(document).ready(function() {
     console.log("AHHHHHERR");
     console.log(room_name);
+    console.log(user_name);
     $('#playtictactoe').attr('disabled', false);
 
     $('form').submit(function(){
@@ -37,6 +38,15 @@ $(document).ready(function() {
                 square.addClass('btn-warning');
                 current = 'X';
             }
+        }
+    });
+
+    socket.on('host message', function(status) {
+        console.log('host message status: ' + status);
+        if (status === 'firstHost') {
+            alert('you are the host of the room');
+        } else if (status === 'hostLeft') {
+            alert('the previous host has left so you are now the host');
         }
     });
 

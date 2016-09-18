@@ -22,9 +22,10 @@ function Person(id, name, firstRoom) {
     this.rooms = [firstRoom];
 }
 
-function Room(roomname) {
+function Room(roomname, hostId) {
     this.roomname = roomname;
     this.users = [];
+    this.host = hostId;
 }
 
 nunjucks.configure('views', {
@@ -47,12 +48,18 @@ app.get('/', function (req, res) {
 temp_name = ''
 
 app.get('/room', function(req, res) {
-  var queries = req.query;
-  var name = temp_name;
-  // TO DO add error if temp_name is still empty to prevent users from joining rooms without first entering in their name
-  var room = queries.room
-  res.render(__dirname + '/views/index.njk', {roomname: room, name: name});
-  io.emit()
+    var queries = req.query;
+    var name = temp_name;
+    // TO DO add error if temp_name is still empty to prevent users from joining rooms without first entering in their name
+    var room = queries.room
+    res.render(__dirname + '/views/index.njk', {roomname: room, name: name});
+    io.emit()
+});
+
+app.get('/:roomname', function(req, res) {
+    if ((_.findIndex(rooms, {roomname: req.params.roomname})) != -1) {
+        res.render(__dirname + '/views/index.njk', {roomname: req.params.roomname, name: ''});
+    } else res.sendStatus(404);
 });
 
 http.listen(1111, function() {
@@ -72,7 +79,6 @@ io.on('connection', function(socket) {
     });
 
 
-    // TODO: make this work
     socket.on('connect waiting', function(info) {
         console.log('waiting room connection');
         waitingRoom.push({"id": user_id});
@@ -96,7 +102,12 @@ io.on('connection', function(socket) {
                     room.users.splice(_.findIndex(room.users, {id: user_id}), 1);
                     if (room.users.length == 0) {
                         rooms.splice(i, 1);
-                    } 
+                    } else if (room.host === user_id) {
+                        console.log('host left');
+                        room.host = room.users[0].id;
+                        console.log('new host: ' + room.host);
+                        io.to(room.host).emit('host message', 'hostLeft');
+                    }
                 }
             }
             people.splice(_.findIndex(people, {id: user_id}), 1);
@@ -133,17 +144,21 @@ function joinRoom(info, user_id, socket, io) {
     var index = _.findIndex((people), {id: socket.id});
     if (index == -1) {
         people.push(new Person(socket.id, socket.name, socket.room));
-    } else (people[index].rooms.push(socket.room));
-
-    socket.join(socket.room);
-    if (!_.findWhere(rooms, {roomname: socket.room})) {
-        rooms.push(new Room(socket.room));
+    } else {
+        (people[index].rooms.push(socket.room));
     }
+    socket.join(socket.room);     
+    if (!_.findWhere(rooms, {roomname: socket.room})) {
+        rooms.push(new Room(socket.room, socket.id));
+        console.log(socket.id);
+        io.to(socket.id).emit('host message', 'firstHost');
+    }     
     users = rooms[_.findIndex(rooms, {roomname: socket.room})].users;
     users.push({"id": socket.id, "name": socket.name});
     console.log('people: ' + util.inspect(people, false, null));
-    console.log('rooms: ' + util.inspect(rooms, false, null));
-    io.to(socket.room).emit('user joined', {"user": socket.name, 
-                                            "room": socket.room, 
-                                            "users": users});
+    console.log('rooms: ' + util.inspect(rooms, false, null));     
+    io.to(socket.room).emit('user joined', {"user": socket.name,
+                                            "room": socket.room,     
+                                            "users": users}); 
 }
+
