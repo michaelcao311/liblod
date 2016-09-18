@@ -10,6 +10,11 @@ $(document).ready(function() {
     $('#submitname').click(function(event) {
         nameToRoom(event);
     });
+    $('#submitter').click(function(event) {
+        var name = $("#name").val(); 
+        var room = $("#roomtyper").val();
+        window.location.href = '/room?name=' + name + '&room=' + room;
+    });
 });
 
 function nameToRoom(event) {
