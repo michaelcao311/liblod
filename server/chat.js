@@ -1,4 +1,6 @@
 $(document).ready(function() {
+    console.log("AHHHHHERR");
+    console.log(room_name);
     $('#playtictactoe').attr('disabled', false);
 
     $('form').submit(function(){
@@ -37,6 +39,7 @@ $(document).ready(function() {
             }
         }
     });
+
     socket.on('moved', function(button, move) {
         console.log("EHHHHHHH");
         search_for = '#' + button;
@@ -55,22 +58,35 @@ $(document).ready(function() {
             square.addClass('btn-warning');
             current = 'X';
         }
-
     });
+
     socket.on('chat recieved', function(msg, username) {
         console.log('here');
         log(username + ": " + msg);    
     });
 
-    socket.on('user left', function(msg) {
-        log(msg);   
+    socket.on('user left', function(info) {
+        log(info.user + ' left');
+        updateUsers(info.users);
     });
 
-    socket.on('user joined', function(msg) {
-        log(msg);
+    socket.on('user joined', function(info) {
+        // Jquery automatically turns JSON into JSON
+        log(info.user + ' joined');
+        updateUsers(info.users);
     });
-
+    
+    function updateUsers(users) {
+        result = '';
+        for (i = 0; i < users.length; i++) {
+            result += '<li>' + users[i].name + '</li>';
+        }
+        $("#users").html(result);
+        $("#usercount").text("Users Online: " + users.length);
+        console.log(result);
+    }
     function log(msg) {
-        $('#chat_result').append($('<li>').text(msg));
+        console.log('Got it');
+        $('#chat_result').prepend($('<li>').text(msg));
     }
 });

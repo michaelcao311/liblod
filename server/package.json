@@ -17,12 +17,14 @@
   },
   "homepage": "https://github.com/michaelcao311/liblod#readme",
   "dependencies": {
+    "async": "^2.0.1",
     "bufferutil": "^1.2.1",
     "express": "^4.14.0",
     "http": "0.0.0",
     "nunjucks": "^2.4.2",
     "path": "^0.12.7",
     "socket.io": "^1.4.8",
+    "underscore": "^1.8.3",
     "utf-8-validate": "^1.2.1",
     "util": "^0.10.3",
     "ws": "^1.1.1"
