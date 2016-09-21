@@ -28,31 +28,35 @@
         <script src="../chat.js"></script>   
         <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-        <link href="https://fonts.googleapis.com/css?family=Bungee+Shade|Source+Sans+Pro:300" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Bungee+Shade|Source+Sans+Pro:300" rel="stylesheet">
     <link href="../css/room.css" rel="stylesheet">
     </head>
     <body>
         <div class="row">
         <div id="chatbox" class="col-sm-4">
-        <h1 id='welcome'> Welcome to Room: {{roomname}}!</h1>
-        <form id="chat"> 
-            <input type="text" id="txt"> </input>
-            <input type="submit"> </input>
-        </form>
-        <button id="playtictactoe">play</button>
-        <h1 id='chat_result'> </h1>
-        <div id='usersonline'> 
-                <h2 id='usercount'> Users Online: </h2>
-            <div id="users">
-                <h3> -- </h3>
+        	<h1 id='welcome'> Welcome to Room: {{roomname}}!</h1>
+	        <form id="chat"> 
+	            <input type="text" id="txt"> </input>
+	            <button type="submit" class="btn btn-default"> Submit </button>
+	        </form>
+	        <h1 id='chat_result'> </h1>
+	        <div id='usersonline'> 
+	                <h2 id='usercount'> Users Online: </h2>
+	            <div id="users">
+	                <h3> -- </h3>
 
-            </div>
+	            </div>
+	        </div>
         </div>
-        </div>
+
         <div id="gamebox" class="col-sm-8">
             <h3> Games </h3>
+
+        <div id="player1">
+        	<button id="play1" class="btn btn-default"> Player 1 </button>
         </div>
-        </div>
+
+        <div id="tic_container">
 
         <table class="tictactoe">
             <tr>
@@ -71,7 +75,13 @@
                 <td id="br"><div class="square"> <button type="button" id="sq9" class="btn btn-success btn-block square_btn"> </button> </div></td>
             </tr>
         </table>
+        </div>
+        <div id="player2">
+        	<button id="play2" class="btn btn-default"> Player 2 </button>
+        </div>
 
+        </div>
+    </div>
 
     </body>
 </html>
