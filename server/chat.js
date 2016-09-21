@@ -1,14 +1,33 @@
 $(document).ready(function() {
     console.log(room_name);
     console.log(user_name);
+    
+    var play1 = $('#play1');
+    var play2 = $('#play2');
 
     $('form').submit(function(){
         socket.emit('chat message', $('#txt').val());
         $('#txt').val('');
         return false;
     });
-    var play1 = $('#play1');
-    var play2 = $('#play2');
+    
+    socket.emit('load players');
+
+    socket.on('player info', function(player1, player2) {
+        console.log("loading players");
+        console.log(player1, player2);
+
+        if (player1 != '') {
+            activate_button(play1, player1);
+        } else {
+            deactivate_button(play1, 'Player 1');
+        }
+        if (player2 != '') {
+            activate_button(play2, player2);
+        } else {
+            deactivate_button(play2, 'Player 2');
+        }
+    });
 
     // gets all the tic tac toe buttons
     var buttons = jQuery('button[id^="sq"]');
@@ -16,7 +35,6 @@ $(document).ready(function() {
     var current = 'X'
     $(buttons).on('click', function(event) {
         var square = $(this);
-        console.log(square.text());
         if (square.text() == ' ') {
             console.log(square.attr('id'));
             square.text(current);
@@ -43,47 +61,51 @@ $(document).ready(function() {
         } else if (status === 'hostLeft') {
             alert('the previous host has left so you are now the host');
         }
-        console.log(name);
-        play1.text(name);
-        play1.removeClass('btn-default');
-        play1.addClass('btn-info');
-        play1.addClass('activated');
+        activate_player(play1, name, 1);
     });
     
     $(play1).on('click', function(event) {
         if (play1.hasClass("activated")) {
-            play1.removeClass('btn-info');
-            play1.addClass('btn-default');
-            play1.removeClass('activated');
-            play1.text('Player 1');
+            deactivate_player(play1, 'Player 1', 1);
         } else {
-            console.log("HERE");
-            play1.text(user_name);
-            play1.removeClass('btn-default');
-            play1.addClass('btn-info');
-            play1.addClass('activated');
+            activate_player(play1, user_name, 1);
         }
     });
 
     $(play2).on('click', function(event) {
         if (play2.hasClass("activated")) {
-            play2.removeClass('btn-info');
-            play2.addClass('btn-default');
-            play2.removeClass('activated');
-            play2.text('Player 2');
+            deactivate_player(play2, 'Player 2', 2);
         } else {
-            console.log("HERE");
-            play2.text(user_name);
-            play2.removeClass('btn-default');
-            play2.addClass('btn-info');
-            play2.addClass('activated');
+            activate_player(play2, user_name, 2);
         }
     });
 
+    function deactivate_player(element, player, num) {
+        deactivate_button(element, player);
+        socket.emit('player left', num);
+    }
+
+    function activate_player(element, name, num) {
+        activate_button(element, name);
+        socket.emit('new player', name, num);
+    }
+
+    function activate_button(element, name) {
+        element.removeClass('btn-default');
+        element.addClass('btn-info');
+        element.addClass('activated');
+        element.text(name);
+    }
+
+    function deactivate_button(element, player) {
+        element.removeClass('btn-info');
+        element.addClass('btn-default');
+        element.removeClass('activated');
+        element.text(player);
+    }
+
     socket.on('moved', function(button, move) {
-        console.log("EHHHHHHH");
         search_for = '#' + button;
-        console.log("search for " + search_for);
         // get the jquery square from the ID, and then we can mess with it
         square = $(search_for)
         square.text(move);
@@ -123,10 +145,9 @@ $(document).ready(function() {
         }
         $("#users").html(result);
         $("#usercount").text("Users Online: " + users.length);
-        console.log(result);
     }
+
     function log(msg) {
-        console.log('Got it');
         $('#chat_result').prepend($('<li>').text(msg));
     }
 });

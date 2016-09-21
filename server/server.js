@@ -26,6 +26,8 @@ function Room(roomname, hostId) {
     this.roomname = roomname;
     this.users = [];
     this.host = hostId;
+    this.player1 = '';
+    this.player2 = '';
 }
 
 nunjucks.configure('views', {
@@ -128,6 +130,31 @@ io.on('connection', function(socket) {
     socket.on('chat message', function(msg) {
         io.to(socket.room).emit('chat recieved', msg, socket.name);
     });
+    
+    socket.on('new player', function(name, player) {
+        current_room = rooms[_.findIndex(rooms, {roomname: socket.room})]
+        if (player == 1){
+            current_room['player1'] = name;
+        } else {
+            current_room['player2'] = name;
+        }
+        io.to(socket.room).emit('player info', current_room.player1, current_room.player2);
+    });
+
+    socket.on('load players', function() {
+        current_room = rooms[_.findIndex(rooms, {roomname: socket.room})]
+        io.to(socket.room).emit('player info', current_room.player1, current_room.player2);
+    });
+
+    socket.on('player left', function(player) {
+        current_room = rooms[_.findIndex(rooms, {roomname: socket.room})]
+        if (player == 1) {
+            current_room['player1'] = '';
+        } else {
+            current_room['player2'] = '';
+        }
+        io.to(socket.room).emit('player info', current_room.player1, current_room.player2);
+    });
 });
 
 function joinRoom(info, user_id, socket, io) {
@@ -155,6 +182,6 @@ function joinRoom(info, user_id, socket, io) {
     console.log('rooms: ' + util.inspect(rooms, false, null));     
     io.to(socket.room).emit('user joined', {"user": socket.name,
                                             "room": socket.room,     
-                                            "users": users}); 
+                                            "users": users});
 }
 
