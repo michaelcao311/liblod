@@ -147,7 +147,7 @@ function joinRoom(info, user_id, socket, io) {
     if (!_.findWhere(rooms, {roomname: socket.room})) {
         rooms.push(new Room(socket.room, socket.id));
         console.log(socket.id);
-        io.to(socket.id).emit('host message', 'firstHost');
+        io.to(socket.id).emit('host message', 'firstHost', socket.name);
     }     
     users = rooms[_.findIndex(rooms, {roomname: socket.room})].users;
     users.push({"id": socket.id, "name": socket.name});

@@ -1,20 +1,15 @@
 $(document).ready(function() {
-    console.log("AHHHHHERR");
     console.log(room_name);
     console.log(user_name);
-    $('#playtictactoe').attr('disabled', false);
 
     $('form').submit(function(){
         socket.emit('chat message', $('#txt').val());
         $('#txt').val('');
         return false;
     });
+    var play1 = $('#play1');
+    var play2 = $('#play2');
 
-    $('#playtictactoe').click(function() {
-        socket.emit('play game', 'tictactoe');
-        $('#playtictactoe').attr('disabled', true); 
-    });
-    
     // gets all the tic tac toe buttons
     var buttons = jQuery('button[id^="sq"]');
     // current move (X is default first move)
@@ -41,12 +36,47 @@ $(document).ready(function() {
         }
     });
 
-    socket.on('host message', function(status) {
+    socket.on('host message', function(status, name) {
         console.log('host message status: ' + status);
         if (status === 'firstHost') {
             alert('you are the host of the room');
         } else if (status === 'hostLeft') {
             alert('the previous host has left so you are now the host');
+        }
+        console.log(name);
+        play1.text(name);
+        play1.removeClass('btn-default');
+        play1.addClass('btn-info');
+        play1.addClass('activated');
+    });
+    
+    $(play1).on('click', function(event) {
+        if (play1.hasClass("activated")) {
+            play1.removeClass('btn-info');
+            play1.addClass('btn-default');
+            play1.removeClass('activated');
+            play1.text('Player 1');
+        } else {
+            console.log("HERE");
+            play1.text(user_name);
+            play1.removeClass('btn-default');
+            play1.addClass('btn-info');
+            play1.addClass('activated');
+        }
+    });
+
+    $(play2).on('click', function(event) {
+        if (play2.hasClass("activated")) {
+            play2.removeClass('btn-info');
+            play2.addClass('btn-default');
+            play2.removeClass('activated');
+            play2.text('Player 2');
+        } else {
+            console.log("HERE");
+            play2.text(user_name);
+            play2.removeClass('btn-default');
+            play2.addClass('btn-info');
+            play2.addClass('activated');
         }
     });
 
