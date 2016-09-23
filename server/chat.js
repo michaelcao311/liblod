@@ -13,10 +13,18 @@ $(document).ready(function() {
     
     socket.emit('load players');
 
-    socket.on('player info', function(player1, player2) {
+    socket.on('player info', function(player1Name, player1Id, player2Name, 
+                                      player2Id) {
         console.log("loading players");
-        console.log(player1, player2);
+        console.log(player1Name, player2Name);
 
+        if (player1Id !== '' && socket.id !== player1Id) {
+            // do something to disable ui for player 1
+        }
+        if (player2Id !== '' && socket.id !== player2Id) {
+            // same for player 2, might have to revamp the activate_button and 
+            // deactivate_button methods to get it to not interfere
+        }
         if (player1 != '') {
             activate_button(play1, player1);
         } else {

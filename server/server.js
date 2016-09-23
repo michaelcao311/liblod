@@ -22,11 +22,10 @@ function Person(id, name, firstRoom) {
     this.rooms = [firstRoom];
 }
 
-function Room(roomname, hostId) {
+function Room(roomname, player1Id, player1Name) {
     this.roomname = roomname;
     this.users = [];
-    this.host = hostId;
-    this.player1 = {id: '', name: ''};
+    this.player1 = {id: player1Id, name: player1Name};
     this.player2 = {id: '', name: ''}; 
 }
 
@@ -56,6 +55,9 @@ app.get('/room', function(req, res) {
 });
 
 app.get('/:roomname', function(req, res) {
+    console.log('param search');
+    console.log(req.params.roomname);
+    console.log(util.inspect(rooms, false, null));
     if ((_.findIndex(rooms, {roomname: req.params.roomname})) != -1) {
         res.render(__dirname + '/views/index.njk', {roomname: req.params.roomname, name: ''});
     } else res.sendStatus(404);
@@ -135,24 +137,24 @@ io.on('connection', function(socket) {
             current_room.player2.id = socket.id;
             current_room.player2.name = name;
         }
-        io.to(socket.room).emit('player info', current_room.player1.name, current_room.player2.name);
+        emitPlayerInfo(socket.room, current_room);
     });
 
     socket.on('load players', function() {
         current_room = rooms[_.findIndex(rooms, {roomname: socket.room})]
-        io.to(socket.room).emit('player info', current_room.player1.name, current_room.player2.name);
+        emitPlayerInfo(socket.room, current_room);
     });
 
     socket.on('player left', function(player) {
         current_room = rooms[_.findIndex(rooms, {roomname: socket.room})]
         if (player == 1) {
             current_room.player1.id = '';
-            current_room.player1.id = '';
+            current_room.player1.name = '';
         } else {
             current_room.player2.id = '';
-            current_room.player2.id = '';
+            current_room.player2.name = '';
         }
-        io.to(socket.room).emit('player info', current_room.player1.name, current_room.player2.name);
+        emitPlayerInfo(socket.room, current_room);
     });
 });
 
@@ -170,8 +172,8 @@ function joinRoom(info, user_id, socket, io) {
         (people[index].rooms.push(socket.room));
     }
     socket.join(socket.room);     
-    if (!_.findWhere(rooms, {roomname: socket.room})) {
-        rooms.push(new Room(socket.room, socket.id));
+    if (_.findIndex(rooms, {roomname: socket.room}) == -1) {
+        rooms.push(new Room(socket.room, socket.id, socket.name));
         console.log(socket.id);
     }     
     users = rooms[_.findIndex(rooms, {roomname: socket.room})].users;
@@ -181,5 +183,11 @@ function joinRoom(info, user_id, socket, io) {
     io.to(socket.room).emit('user joined', {"user": socket.name,
                                             "room": socket.room,     
                                             "users": users});
+    current_room = rooms[_.findIndex(rooms, {roomname: socket.room})];
+    emitPlayerInfo(socket.room, current_room);
 }
 
+function emitPlayerInfo(socketRoom, currentRoom) {
+    io.to(socketRoom).emit('player info', currentRoom.player1.name, currentRoom.player1.id,
+        currentRoom.player2.name, currentRoom.player2.id);
+}
