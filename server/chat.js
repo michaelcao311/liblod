@@ -53,16 +53,6 @@ $(document).ready(function() {
             }
         }
     });
-
-    socket.on('host message', function(status, name) {
-        console.log('host message status: ' + status);
-        if (status === 'firstHost') {
-            alert('you are the host of the room');
-        } else if (status === 'hostLeft') {
-            alert('the previous host has left so you are now the host');
-        }
-        activate_player(play1, name, 1);
-    });
     
     $(play1).on('click', function(event) {
         if (play1.hasClass("activated")) {

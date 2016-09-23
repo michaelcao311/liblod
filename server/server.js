@@ -26,8 +26,8 @@ function Room(roomname, hostId) {
     this.roomname = roomname;
     this.users = [];
     this.host = hostId;
-    this.player1 = '';
-    this.player2 = '';
+    this.player1 = {id: '', name: ''};
+    this.player2 = {id: '', name: ''}; 
 }
 
 nunjucks.configure('views', {
@@ -100,11 +100,6 @@ io.on('connection', function(socket) {
                     room.users.splice(_.findIndex(room.users, {id: user_id}), 1);
                     if (room.users.length == 0) {
                         rooms.splice(i, 1);
-                    } else if (room.host === user_id) {
-                        console.log('host left');
-                        room.host = room.users[0].id;
-                        console.log('new host: ' + room.host);
-                        io.to(room.host).emit('host message', 'hostLeft');
                     }
                 }
             }
@@ -134,26 +129,30 @@ io.on('connection', function(socket) {
     socket.on('new player', function(name, player) {
         current_room = rooms[_.findIndex(rooms, {roomname: socket.room})]
         if (player == 1){
-            current_room['player1'] = name;
+            current_room.player1.id = socket.id;
+            current_room.player1.name = name;
         } else {
-            current_room['player2'] = name;
+            current_room.player2.id = socket.id;
+            current_room.player2.name = name;
         }
-        io.to(socket.room).emit('player info', current_room.player1, current_room.player2);
+        io.to(socket.room).emit('player info', current_room.player1.name, current_room.player2.name);
     });
 
     socket.on('load players', function() {
         current_room = rooms[_.findIndex(rooms, {roomname: socket.room})]
-        io.to(socket.room).emit('player info', current_room.player1, current_room.player2);
+        io.to(socket.room).emit('player info', current_room.player1.name, current_room.player2.name);
     });
 
     socket.on('player left', function(player) {
         current_room = rooms[_.findIndex(rooms, {roomname: socket.room})]
         if (player == 1) {
-            current_room['player1'] = '';
+            current_room.player1.id = '';
+            current_room.player1.id = '';
         } else {
-            current_room['player2'] = '';
+            current_room.player2.id = '';
+            current_room.player2.id = '';
         }
-        io.to(socket.room).emit('player info', current_room.player1, current_room.player2);
+        io.to(socket.room).emit('player info', current_room.player1.name, current_room.player2.name);
     });
 });
 
@@ -174,7 +173,6 @@ function joinRoom(info, user_id, socket, io) {
     if (!_.findWhere(rooms, {roomname: socket.room})) {
         rooms.push(new Room(socket.room, socket.id));
         console.log(socket.id);
-        io.to(socket.id).emit('host message', 'firstHost', socket.name);
     }     
     users = rooms[_.findIndex(rooms, {roomname: socket.room})].users;
     users.push({"id": socket.id, "name": socket.name});
