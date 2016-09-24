@@ -55,11 +55,13 @@ app.get('/room', function(req, res) {
 });
 
 app.get('/:roomname', function(req, res) {
+    var name = req.query.name;
+    console.log('queries.name: ' + name);
     console.log('param search');
     console.log(req.params.roomname);
     console.log(util.inspect(rooms, false, null));
     if ((_.findIndex(rooms, {roomname: req.params.roomname})) != -1) {
-        res.render(__dirname + '/views/index.njk', {roomname: req.params.roomname, name: ''});
+        res.render(__dirname + '/views/index.njk', {roomname: req.params.roomname, name: name});
     } else res.sendStatus(404);
 });
 
@@ -77,6 +79,8 @@ io.on('connection', function(socket) {
             // TODO: add error catching here
         }
         joinRoom(info, user_id, socket, io);
+        current_room = rooms[_.findIndex(rooms, {roomname: socket.room})];
+        emitPlayerInfo(socket.room, current_room);
     });
 
     socket.on('connect waiting', function(info) {

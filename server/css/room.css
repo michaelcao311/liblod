@@ -63,13 +63,13 @@ td {
     text-align:center;
     font-size: 35px;
 }
-#player1 {
+#playerOne {
     width: 100%;
     text-align:center;
     margin-bottom: 5px;
 }
 
-#player2 {
+#playerTwo {
     width: 100%;
     text-align:center;   
     margin-top: 5px;

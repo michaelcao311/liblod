@@ -1,9 +1,13 @@
 $(document).ready(function() {
     console.log(room_name);
     console.log(user_name);
-    
+   
     var play1 = $('#play1');
     var play2 = $('#play2');
+    play1.prop('disabled', false);
+    play2.prop('disabled', false);
+    player1 = '';
+    player2 = '';
 
     $('form').submit(function(){
         socket.emit('chat message', $('#txt').val());
@@ -18,22 +22,30 @@ $(document).ready(function() {
         console.log("loading players");
         console.log(player1Name, player2Name);
 
-        if (player1Id !== '' && socket.id !== player1Id) {
-            // do something to disable ui for player 1
-        }
-        if (player2Id !== '' && socket.id !== player2Id) {
-            // same for player 2, might have to revamp the activate_button and 
-            // deactivate_button methods to get it to not interfere
-        }
-        if (player1 != '') {
-            activate_button(play1, player1);
+        player1 = player1Id;
+        player2 = player2Id;
+
+        if (player1Id !== '') {
+            play1.html(player1Name);
+            if (player1.endsWith(socket.id)) {
+                play1.prop('disabled', false);
+            } else {
+                play1.prop('disabled', true);
+            }
         } else {
-            deactivate_button(play1, 'Player 1');
+            play1.prop('disabled', player2.endsWith(socket.id));
+            play1.html('Player 1');
         }
-        if (player2 != '') {
-            activate_button(play2, player2);
+        if (player2Id !== '') {
+            play2.html(player2Name);
+            if (player2.endsWith(socket.id)) {
+                play2.prop('disabled', false);
+            } else {
+                play2.prop('disabled', true);
+            }
         } else {
-            deactivate_button(play2, 'Player 2');
+            play2.prop('disabled', player1.endsWith(socket.id));
+            play2.html('Player 2');
         }
     });
 
@@ -62,19 +74,18 @@ $(document).ready(function() {
         }
     });
     
-    $(play1).on('click', function(event) {
-        if (play1.hasClass("activated")) {
-            deactivate_player(play1, 'Player 1', 1);
+    play1.click(function() {
+        if (player1 === '') {
+            socket.emit('new player', user_name, 1);
         } else {
-            activate_player(play1, user_name, 1);
+            socket.emit('player left', 1);
         }
     });
-
-    $(play2).on('click', function(event) {
-        if (play2.hasClass("activated")) {
-            deactivate_player(play2, 'Player 2', 2);
+    play2.click(function() {
+        if (player2 === '') {
+            socket.emit('new player', user_name, 2);
         } else {
-            activate_player(play2, user_name, 2);
+            socket.emit('player left', 2);
         }
     });
 
